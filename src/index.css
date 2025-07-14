@@ -1,0 +1,7 @@
+@import "tailwindcss";
+/* @plugin "daisyui"; */
+
+html,
+body {
+  @apply bg-black; /* or a dark color close to your Hero image */
+}
