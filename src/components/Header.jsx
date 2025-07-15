@@ -54,14 +54,16 @@ export default function Header() {
               Events
             </NavLink>
           </li>
-          <li>
-            <NavLink
-              to="/signup"
-              className={({ isActive }) => (isActive ? "underline" : "")}
-            >
-              Sign Up
-            </NavLink>
-          </li>
+          {!isAuth && (
+            <li>
+              <NavLink
+                to="/signup"
+                className={({ isActive }) => (isActive ? "underline" : "")}
+              >
+                Sign Up
+              </NavLink>
+            </li>
+          )}
           <li>
             {isAuth ? (
               <button

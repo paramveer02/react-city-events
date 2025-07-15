@@ -29,6 +29,9 @@ export default function SignIn() {
         </h2>
 
         <div>
+          <label className="block text-sm font-semibold text-fuchsia-900 mb-1">
+            Email
+          </label>
           <input
             type="email"
             name="email"
