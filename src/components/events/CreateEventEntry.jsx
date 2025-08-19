@@ -40,7 +40,6 @@ export default function CreateEventEntry() {
       },
       body: JSON.stringify(payload),
     };
-    console.log(payload);
 
     await getJSON(`http://localhost:3001/api/events`, options);
     navigate("/events");
