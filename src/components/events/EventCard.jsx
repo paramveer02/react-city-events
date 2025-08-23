@@ -1,4 +1,3 @@
-// src/components/events/EventCard.jsx
 import { FaMapMarkerAlt, FaCalendarAlt, FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
 

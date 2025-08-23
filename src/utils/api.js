@@ -2,7 +2,6 @@ export const API_BASE =
   import.meta.env.VITE_API_URL || "https://events-server-wnax.onrender.com";
 
 export default async function getJSON(url, options = {}) {
-  // Keep absolute URLs (e.g., Nominatim) intact
   const fullUrl = url.startsWith("http") ? url : `${API_BASE}${url}`;
 
   const res = await fetch(fullUrl, {

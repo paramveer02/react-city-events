@@ -1,4 +1,3 @@
-// src/components/Footer.jsx
 export default function Footer() {
   return (
     <footer className="bg-transparent text-white/80 py-8">

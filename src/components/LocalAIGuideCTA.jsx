@@ -1,4 +1,3 @@
-// src/components/LocalAIGuideCTA.jsx
 import { motion } from "framer-motion";
 
 export default function LocalAIGuideCTA({ onClick, disabled }) {

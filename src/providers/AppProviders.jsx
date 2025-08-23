@@ -1,4 +1,3 @@
-// src/providers/AppProviders.jsx
 import { Toaster } from "react-hot-toast";
 
 export default function AppProviders({ children }) {

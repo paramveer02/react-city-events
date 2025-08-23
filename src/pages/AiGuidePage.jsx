@@ -1,4 +1,3 @@
-// src/pages/AIGuidePage.jsx
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";

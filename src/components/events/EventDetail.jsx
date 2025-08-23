@@ -1,4 +1,3 @@
-// src/pages/events/EventDetail.jsx
 import { useMemo, useState } from "react";
 import { useLoaderData, useNavigate, redirect } from "react-router-dom";
 import { motion } from "framer-motion";

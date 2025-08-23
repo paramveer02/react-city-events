@@ -1,4 +1,3 @@
-// src/components/Loader.jsx
 import { RingLoader } from "react-spinners";
 
 export default function Loader() {

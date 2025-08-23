@@ -32,7 +32,7 @@ export default function Hero() {
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         try {
-          // Option A: fetch here then navigate with state (fast)
+          // fetch here then navigate with state (fast)
           const res = await fetch(
             "https://events-server-wnax.onrender.com/api/ai/city-guide",
             {
@@ -49,7 +49,7 @@ export default function Hero() {
             throw new Error(json?.message || "Failed to fetch guide");
           navigate("/ai-guide", { state: { guide: json.data } });
         } catch {
-          // Option B (fallback): navigate with coords query and let AI page fetch if you add that later
+          //(fallback): navigate with coords query and let AI page fetch if you add that later
           setShowCityPrompt(true);
         } finally {
           setLoading(false);

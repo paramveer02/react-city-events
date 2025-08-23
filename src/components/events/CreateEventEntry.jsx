@@ -1,4 +1,3 @@
-// src/pages/CreateEventEntry.jsx
 import { Form, useActionData, useNavigation, redirect } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";

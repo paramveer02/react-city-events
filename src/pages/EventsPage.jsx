@@ -1,4 +1,3 @@
-// src/pages/EventsPage.jsx
 import { useContext, useEffect, useState } from "react";
 import EventCard from "../components/events/EventCard";
 import { motion } from "framer-motion";
