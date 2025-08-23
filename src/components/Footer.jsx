@@ -1,7 +1,12 @@
+// src/components/Footer.jsx
 export default function Footer() {
   return (
-    <footer className="text-center text-sm text-gray-400 mt-10 pb-2">
-      © 2025 EventSpark. Made with ❤️
+    <footer className="bg-transparent text-white/80 py-8">
+      <div className="mx-auto w-[min(96%,1100px)] text-center">
+        <p>
+          © {new Date().getFullYear()} EventSpark: Light up your city life ✨
+        </p>
+      </div>
     </footer>
   );
 }
