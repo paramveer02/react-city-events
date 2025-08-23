@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import CityGuidePanel from "../components/CityGuidePanel";
 
 async function fetchGuideByCity(city) {
-  const res = await fetch("/api/ai/city-guide", {
+  const res = await fetch(" http://localhost:8000/api/ai/city-guide", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ city }),
