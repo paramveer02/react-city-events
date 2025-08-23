@@ -1,11 +1,27 @@
+export const API_BASE =
+  import.meta.env.VITE_API_URL || "https://events-server-wnax.onrender.com";
+
 export default async function getJSON(url, options = {}) {
-  try {
-    const response = await fetch(url, options);
-    if (!response.ok) throw new Error("Something went wrong!");
-    const data = await response.json();
-    return data;
-  } catch (e) {
-    console.error("❌ Fetch error:", e.message);
-    throw e;
+  // Keep absolute URLs (e.g., Nominatim) intact
+  const fullUrl = url.startsWith("http") ? url : `${API_BASE}${url}`;
+
+  const res = await fetch(fullUrl, {
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
+    ...options,
+  });
+
+  if (!res.ok) {
+    let err;
+    try {
+      err = await res.json();
+    } catch {
+      err = { message: res.statusText };
+    }
+    throw new Error(err.message || `Request failed with status ${res.status}`);
   }
+  return res.json();
 }

@@ -12,12 +12,15 @@ export async function signinAction({ request }) {
   const formData = await request.formData();
   const payload = Object.fromEntries(formData);
 
-  const res = await fetch("http://localhost:8000/api/v1/auth/login", {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+  const res = await fetch(
+    "https://events-server-wnax.onrender.com/api/v1/auth/login",
+    {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }
+  );
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));

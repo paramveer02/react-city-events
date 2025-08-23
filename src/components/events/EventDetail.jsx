@@ -13,10 +13,10 @@ export async function eventDetailLoader({ params }) {
 
   // fire both requests together; cookies must be included
   const [evRes, meRes] = await Promise.all([
-    fetch(`http://localhost:8000/api/v1/events/${id}`, {
+    fetch(`https://events-server-wnax.onrender.com/api/v1/events/${id}`, {
       credentials: "include",
     }),
-    fetch(`http://localhost:8000/api/v1/users/current-user`, {
+    fetch(`https://events-server-wnax.onrender.com/api/v1/users/current-user`, {
       credentials: "include",
     }),
   ]);
@@ -88,7 +88,7 @@ export default function EventDetail() {
     try {
       setDeleting(true);
       const res = await fetch(
-        `http://localhost:8000/api/v1/events/${event._id}`,
+        `https://events-server-wnax.onrender.com/api/v1/events/${event._id}`,
         {
           method: "DELETE",
           credentials: "include",

@@ -34,7 +34,7 @@ export default function EventsPage() {
         if (ignore) return;
 
         setStatus("Fetching nearby events…");
-        const url = `http://localhost:8000/api/v1/events/near?lat=${coords.latitude}&lng=${coords.longitude}`;
+        const url = `https://events-server-wnax.onrender.com/api/v1/events/near?lat=${coords.latitude}&lng=${coords.longitude}`;
         const data = await getJSON(url);
 
         const list = Array.isArray(data?.events)

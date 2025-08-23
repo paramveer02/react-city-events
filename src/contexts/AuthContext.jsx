@@ -10,7 +10,7 @@ export default function AuthProvider({ children }) {
   async function fetchMe() {
     try {
       const res = await fetch(
-        "http://localhost:8000/api/v1/users/current-user",
+        "https://events-server-wnax.onrender.com/api/v1/users/current-user",
         {
           credentials: "include",
         }
@@ -55,10 +55,13 @@ export default function AuthProvider({ children }) {
 
   async function logout() {
     try {
-      await fetch("http://localhost:8000/api/v1/auth/logout", {
-        method: "GET",
-        credentials: "include",
-      });
+      await fetch(
+        "https://events-server-wnax.onrender.com/api/v1/auth/logout",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
     } finally {
       localStorage.removeItem("auth");
       setUser(null);

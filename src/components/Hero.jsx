@@ -33,14 +33,17 @@ export default function Hero() {
       async (pos) => {
         try {
           // Option A: fetch here then navigate with state (fast)
-          const res = await fetch("http://localhost:8000/api/ai/city-guide", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({
-              coords: { lat: pos.coords.latitude, lng: pos.coords.longitude },
-            }),
-          });
+          const res = await fetch(
+            "https://events-server-wnax.onrender.com/api/ai/city-guide",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({
+                coords: { lat: pos.coords.latitude, lng: pos.coords.longitude },
+              }),
+            }
+          );
           const json = await res.json();
           if (!res.ok)
             throw new Error(json?.message || "Failed to fetch guide");

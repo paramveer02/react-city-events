@@ -5,12 +5,15 @@ import { motion } from "framer-motion";
 import CityGuidePanel from "../components/CityGuidePanel";
 
 async function fetchGuideByCity(city) {
-  const res = await fetch(" http://localhost:8000/api/ai/city-guide", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ city }),
-    credentials: "include",
-  });
+  const res = await fetch(
+    "https://events-server-wnax.onrender.com/api/ai/city-guide",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ city }),
+      credentials: "include",
+    }
+  );
   const json = await res.json();
   if (!res.ok) throw new Error(json?.message || "Failed to fetch guide");
   return json.data;

@@ -17,7 +17,8 @@ export default function MyEvents() {
       setError("");
 
       try {
-        const url = "http://localhost:8000/api/v1/events/mine";
+        const url =
+          "https://events-server-wnax.onrender.com/api/v1/events/mine";
         const res = await fetch(url, {
           method: "GET",
           credentials: "include",

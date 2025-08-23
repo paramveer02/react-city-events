@@ -14,12 +14,15 @@ export async function createEventAction({ request }) {
   // convert <input type="datetime-local"> to ISO
   const dateISO = new Date(dateRaw).toISOString();
 
-  const res = await fetch("http://localhost:8000/api/v1/events", {
-    method: "POST",
-    credentials: "include", // send auth cookie
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, description, date: dateISO, location }),
-  });
+  const res = await fetch(
+    "https://events-server-wnax.onrender.com/api/v1/events",
+    {
+      method: "POST",
+      credentials: "include", // send auth cookie
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, description, date: dateISO, location }),
+    }
+  );
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
