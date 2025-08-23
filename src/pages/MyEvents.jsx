@@ -63,7 +63,7 @@ export default function MyEvents() {
     >
       <div
         className="fixed inset-0 -z-10 bg-cover bg-center"
-        style={{ backgroundImage: "url('/bg-2.jpg')" }}
+        style={{ backgroundImage: "url('/bg-5.jpg')" }}
         aria-hidden
       />
       <div className="fixed inset-0 -z-10 bg-black/45" aria-hidden />
