@@ -1,81 +1,88 @@
+// src/components/Header.jsx
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import { useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 
+const baseLink =
+  "relative px-3 py-2 text-sm font-medium text-white/90 hover:text-white transition";
+const active =
+  "after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-1 after:h-[2px] after:w-6 after:rounded-full after:bg-white/70";
+
 export default function Header() {
-  const { logout, isAuth } = useContext(AuthContext);
+  const { logout, isAuth, user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  function handleLogout() {
-    logout();
+  async function handleLogout() {
+    await logout();
     navigate("/signin");
   }
 
   return (
-    <header className="fixed top-4 left-0 w-full z-50 flex justify-center">
-      <nav
-        className="max-w-6xl w-full mx-auto px-6 py-3
-        bg-white/80 dark:bg-gray-900/80
-        backdrop-blur-md rounded-2xl shadow-md flex items-center justify-between"
-      >
-        {/* LOGO */}
-        <Link
-          to="/"
-          className="text-2xl font-bold text-indigo-600 dark:text-indigo-300"
-        >
-          <motion.h3
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-2xl md:text-2xl font-extrabold text-center mb-2 
-             text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-indigo-500 
-             drop-shadow-[0_2px_12px_rgba(199,108,255,0.8)] tracking-wide"
-          >
+    <header className="pointer-events-none fixed top-4 left-0 z-50 flex w-full justify-center">
+      <nav className="relative pointer-events-auto w-[94%] max-w-6xl px-4 sm:px-6 py-3 rounded-2xl border border-white/20 bg-gradient-to-r from-black/35 via-black/25 to-black/35 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.25)] flex items-center justify-between">
+        <Link to="/" className="shrink-0">
+          <span className="text-lg sm:text-xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-300 via-pink-300 to-indigo-300 drop-shadow-[0_1px_8px_rgba(255,255,255,0.35)] cursor-pointer">
             ✨ EventSpark ✨
-          </motion.h3>
+          </span>
         </Link>
 
-        {/* LINKS */}
-        <ul className="flex space-x-6 text-sm font-medium text-gray-700 dark:text-gray-500">
+        {/* Centered greeting */}
+        {isAuth && user?.name && (
+          <div className="absolute left-1/2 -translate-x-1/2 flex items-center">
+            <span className="inline-flex items-center gap-1 rounded-xl px-3 py-2 text-sm font-semibold text-white/95 bg-white/10 border border-white/15 backdrop-blur-md bg-gradient-to-r from-rose-500 to-fuchsia-500 cursor-pointer hover:brightness-110 active:scale-[0.98] transition">
+              Hello,<span className="font-bold">{user.name}</span>
+            </span>
+          </div>
+        )}
+
+        <ul className="flex items-center gap-1 sm:gap-2">
           <li>
             <NavLink
               to="/"
-              className={({ isActive }) => (isActive ? "underline" : "")}
+              className={({ isActive }) =>
+                `${baseLink} ${isActive ? active : ""}`
+              }
             >
               Home
             </NavLink>
           </li>
           <li>
             <NavLink
-              to="/events"
-              className={({ isActive }) => (isActive ? "underline" : "")}
+              to="/myevents"
+              className={({ isActive }) =>
+                `${baseLink} ${isActive ? active : ""}`
+              }
             >
-              Events
+              My Events
             </NavLink>
           </li>
+
           {!isAuth && (
-            <li>
+            <li className="hidden sm:block">
               <NavLink
                 to="/signup"
-                className={({ isActive }) => (isActive ? "underline" : "")}
+                className={({ isActive }) =>
+                  `${baseLink} ${isActive ? active : ""}`
+                }
               >
                 Sign Up
               </NavLink>
             </li>
           )}
-          <li>
+
+          <li className="ml-1 sm:ml-3">
             {isAuth ? (
               <button
+                type="button"
                 onClick={handleLogout}
-                className="text-red-600 dark:text-red-400 font-semibold"
+                className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white shadow-sm bg-gradient-to-r from-rose-500 to-fuchsia-900 cursor-pointer hover:brightness-110 active:scale-[0.98] transition"
               >
                 Sign Out
               </button>
             ) : (
               <NavLink
                 to="/signin"
-                className={({ isActive }) => (isActive ? "underline" : "")}
+                className="inline-flex items-center rounded-xl px-3 py-2 text-sm font-semibold text-white bg-gradient-to-r from-fuchsia-900 via-pink-300 to-indigo-900 hover:from-pink-500 hover:to-purple-500 shadow-md transition cursor-pointer animate-pulse"
               >
                 Sign In
               </NavLink>

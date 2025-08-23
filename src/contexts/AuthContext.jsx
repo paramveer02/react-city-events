@@ -1,73 +1,76 @@
-import { createContext, useState } from "react";
-import getJSON from "../utils/api";
-import { useEffect } from "react";
+// src/contexts/AuthContext.jsx
+import { createContext, useEffect, useState, useMemo } from "react";
 
 export const AuthContext = createContext();
 
-export default function AuthContextProvider({ children }) {
+export default function AuthProvider({ children }) {
   const [isAuth, setIsAuth] = useState(false);
+  const [user, setUser] = useState(null);
 
-  const [authData, setAuthData] = useState({
-    email: "",
-    password: "",
-  });
-
-  useEffect(() => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    if (token) {
+  async function fetchMe() {
+    try {
+      const res = await fetch(
+        "http://localhost:8000/api/v1/users/current-user",
+        {
+          credentials: "include",
+        }
+      );
+      if (!res.ok) throw new Error("not authed");
+      const data = await res.json();
+      const u = data.user ?? data;
+      setUser(u);
       setIsAuth(true);
+    } catch {
+      setUser(null);
+      setIsAuth(false);
+    }
+  }
+
+  // boot once
+  useEffect(() => {
+    // local flag + cookie roundtrip
+    if (localStorage.getItem("auth") === "1") {
+      fetchMe();
+    } else {
+      // even if local flag is missing, try cookie (user could refresh)
+      fetchMe();
     }
   }, []);
 
-  function updateAuthData(e) {
-    const { name, value } = e.target;
-    setAuthData((prev) => ({ ...prev, [name]: value }));
-  }
-
-  function resetAuthData() {
-    setAuthData({
-      email: "",
-      password: "",
-    });
-  }
-
-  async function login() {
-    const users = JSON.parse(localStorage.getItem("users"));
-
-    // check if user exists
-    const userExists = users.find((user) => user.email === authData.email);
-    if (!userExists) alert("user not found!!");
-
-    const options = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(authData),
+  // react to cross-tab + in-app auth changes
+  useEffect(() => {
+    const onChange = () => fetchMe();
+    window.addEventListener("storage", onChange);
+    window.addEventListener("authchange", onChange);
+    return () => {
+      window.removeEventListener("storage", onChange);
+      window.removeEventListener("authchange", onChange);
     };
+  }, []);
 
+  function login() {
+    localStorage.setItem("auth", "1");
+    window.dispatchEvent(new Event("authchange"));
+  }
+
+  async function logout() {
     try {
-      const { token } = await getJSON(
-        `http://localhost:3001/api/auth/login`,
-        options
-      );
-
-      localStorage.setItem("token", JSON.stringify(token));
-      setIsAuth(true);
-      resetAuthData();
-    } catch (e) {
-      console.error(e);
+      await fetch("http://localhost:8000/api/v1/auth/logout", {
+        method: "GET",
+        credentials: "include",
+      });
+    } finally {
+      localStorage.removeItem("auth");
+      setUser(null);
+      setIsAuth(false);
+      window.dispatchEvent(new Event("authchange"));
     }
   }
 
-  function logout() {
-    localStorage.removeItem("token");
-    setIsAuth(false);
-  }
-
-  return (
-    <AuthContext.Provider
-      value={{ isAuth, login, logout, authData, updateAuthData, resetAuthData }}
-    >
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({ isAuth, user, login, logout }),
+    [isAuth, user]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

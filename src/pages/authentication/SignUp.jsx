@@ -1,135 +1,137 @@
-import { useState } from "react";
-import getJSON from "../../utils/api";
-import { sleep } from "../../utils/helper";
-import { useNavigate } from "react-router";
-import Typewriter from "typewriter-effect";
-import { useContext } from "react";
-import { AuthContext } from "../../contexts/AuthContext";
-import { Link } from "react-router";
-import { motion } from "framer-motion";
+import {
+  Form,
+  useActionData,
+  useNavigation,
+  redirect,
+  Link,
+} from "react-router-dom";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
+
+export async function signupAction({ request }) {
+  const formData = await request.formData();
+  const payload = Object.fromEntries(formData);
+
+  const res = await fetch("http://localhost:8000/api/v1/auth/signup", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    return { error: err.message || "Signup failed" };
+  }
+
+  // cookie is set; mirror it locally so header flips instantly
+  localStorage.setItem("auth", "1");
+  window.dispatchEvent(new Event("authchange"));
+
+  return redirect("/events?signedup=1");
+}
 
 export default function SignUp() {
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const { authData, updateAuthData } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const action = useActionData();
+  const nav = useNavigation();
 
-  function handleChange(e) {
-    updateAuthData(e);
-  }
-
-  async function handleSignUp(e) {
-    e.preventDefault();
-
-    const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
-    const updatedUsers = [...existingUsers, authData];
-
-    const userExists = existingUsers.find(
-      (user) => user.email.toLowerCase() === authData.email.toLowerCase()
-    );
-
-    if (userExists) {
-      alert("user exists already");
-      return;
-    }
-
-    localStorage.setItem("users", JSON.stringify(updatedUsers));
-
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(authData),
-    };
-
-    await getJSON(`http://localhost:3001/api/users`, options);
-
-    setIsSubmitted(true);
-    await sleep(6000);
-    navigate("/signin");
-  }
+  useEffect(() => {
+    if (action?.error) toast.error(action.error);
+  }, [action]);
 
   return (
-    <div className="w-full max-w-md">
-      {isSubmitted ? (
-        <div className="text-center font-black text-5xl sm:text-6xl md:text-7xl text-fuchsia-500 drop-shadow-[0_2px_6px_rgba(255,0,255,0.8)] tracking-wide leading-snug">
-          <Typewriter
-            options={{
-              strings: ["You're almost in!", "To Explore..."],
-              autoStart: true,
-              loop: false,
-              delay: 50,
-              deleteSpeed: 20,
-            }}
-          />
-        </div>
-      ) : (
-        <form
-          onSubmit={handleSignUp}
-          className="p-8 rounded-2xl shadow-2xl w-full max-w-md border border-purple-700 bg-white/5 backdrop-blur-md"
-        >
-          <h2 className="text-3xl font-extrabold text-center mb-6 text-black tracking-wide">
+    <section
+      className="relative min-h-[calc(100vh-var(--header-h))] flex items-center justify-center"
+      style={{ paddingTop: "var(--header-h)" }}
+    >
+      <div
+        className="fixed inset-0 -z-10 bg-cover bg-center"
+        style={{ backgroundImage: "url('/bg-2.jpg')" }}
+        aria-hidden
+      />
+      <div className="fixed inset-0 -z-10 bg-black/40 backdrop-blur-[1px]" />
+
+      <Form
+        method="post"
+        className="w-full max-w-md p-8 rounded-2xl text-white
+                   bg-black/40 backdrop-blur-xl
+                   border border-white/15 shadow-[0_30px_80px_rgba(0,0,0,0.35)]
+                   space-y-5"
+      >
+        <h2 className="text-3xl font-extrabold text-center">
+          <span className="bg-gradient-to-r from-indigo-400 via-fuchsia-400 to-rose-400 bg-clip-text text-transparent">
             Create Your Account
-          </h2>
+          </span>
+        </h2>
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm text-black font-extrabold mb-1">
-                Email
-              </label>
-              <input
-                type="text"
-                name="email"
-                placeholder="you@example.com"
-                value={authData.email}
-                onChange={handleChange}
-                className="w-full px-4 py-2 rounded-lg bg-zinc-800 text-white border border-zinc-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
+        <Field label="Name">
+          <input
+            name="name"
+            required
+            placeholder="John Doe"
+            className="w-full px-4 py-2 rounded-lg bg-zinc-900/70 border border-white/10 focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+          />
+        </Field>
 
-            <div>
-              <label className="block text-sm text-black font-extrabold mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                placeholder="••••••••"
-                value={authData.password}
-                onChange={handleChange}
-                className="w-full px-4 py-2 rounded-lg bg-zinc-800 text-white border border-zinc-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
+        <Field label="Email">
+          <input
+            type="email"
+            name="email"
+            required
+            placeholder="you@example.com"
+            className="w-full px-4 py-2 rounded-lg bg-zinc-900/70 border border-white/10 focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+          />
+        </Field>
 
-            <button
-              type="submit"
-              className="w-full mt-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-semibold transition-colors"
-            >
-              Sign Up
-            </button>
-          </div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
-            className="mt-8 text-center"
+        <Field label="Password">
+          <input
+            type="password"
+            name="password"
+            required
+            placeholder="••••••••"
+            className="w-full px-4 py-2 rounded-lg bg-zinc-900/70 border border-white/10 focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+          />
+        </Field>
+
+        <button
+          type="submit"
+          disabled={nav.state === "submitting"}
+          className="btn-gradient w-full py-3 rounded-xl font-semibold text-white
+                     bg-gradient-to-r from-fuchsia-900 via-pink-300 to-indigo-900
+                     shadow-[0_10px_30px_rgba(99,102,241,0.35)]
+                     hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer"
+        >
+          {nav.state === "submitting" ? "Creating..." : "Sign Up ✨"}
+        </button>
+
+        <p className="text-center text-sm text-white/80">
+          Already a member of{" "}
+          <span className="text-fuchsia-300 font-semibold">EventSpark</span>?
+        </p>
+        <div className="flex justify-center">
+          <Link
+            to="/signin"
+            className="group relative inline-flex items-center justify-center rounded-xl px-6 py-3 font-semibold text-white
+                       bg-gradient-to-r from-fuchsia-900 via-pink-300 to-indigo-900
+                       shadow-[0_10px_30px_rgba(99,102,241,0.35)]
+                       hover:brightness-110 active:scale-[0.98] transition btn-pulse cursor-pointer"
           >
-            <p className="text-sm text-zinc-300">
-              🚀 Already a member of{" "}
-              <span className="text-fuchsia-400 font-semibold tracking-wide">
-                EventSpark
-              </span>
-              ?
-            </p>
-            <Link
-              to="/signin"
-              className="mt-2 inline-block px-5 py-2 bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-semibold rounded-full shadow-md hover:shadow-lg transition-all duration-300"
-            >
-              ✨ Sign in Now & Explore Events
-            </Link>
-          </motion.div>
-        </form>
-      )}
-    </div>
+            ✨ Sign in Now
+            <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
+              <span className="btn-sheen" />
+            </span>
+          </Link>
+        </div>
+      </Form>
+    </section>
+  );
+}
+
+function Field({ label, children }) {
+  return (
+    <label className="block space-y-2">
+      <span className="text-sm font-semibold text-white/90">{label}</span>
+      {children}
+    </label>
   );
 }
