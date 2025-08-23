@@ -75,7 +75,7 @@ export default function Hero() {
         <div className="absolute inset-0 bg-black/40" aria-hidden />
         <div
           className="fixed inset-0 -z-10 bg-cover bg-center"
-          style={{ backgroundImage: "url('/bg-3.jpg')" }}
+          style={{ backgroundImage: "url('/bg-4.jpg')" }}
           aria-hidden
         />
         <div className="fixed inset-0 -z-10 bg-black/40" aria-hidden />
