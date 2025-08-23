@@ -1,88 +1,129 @@
-import { useContext } from "react";
-import { AuthContext } from "../../contexts/AuthContext";
-import { useNavigate } from "react-router";
-import { Link } from "react-router";
-import { motion } from "framer-motion";
+import {
+  Form,
+  useActionData,
+  useNavigation,
+  redirect,
+  Link,
+} from "react-router-dom";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
+
+export async function signinAction({ request }) {
+  const formData = await request.formData();
+  const payload = Object.fromEntries(formData);
+
+  const res = await fetch("http://localhost:8000/api/v1/auth/login", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    return { error: err.message || "Login failed" };
+  }
+
+  // mark authenticated locally so header flips immediately
+  localStorage.setItem("auth", "1");
+  window.dispatchEvent(new Event("authchange"));
+
+  return redirect("/?signedin=1");
+}
 
 export default function SignIn() {
-  const { updateAuthData, authData, login } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const action = useActionData();
+  const nav = useNavigation();
 
-  function handleChange(e) {
-    updateAuthData(e);
-  }
-
-  function handleLogin(e) {
-    e.preventDefault();
-    login();
-    navigate("/events");
-  }
+  useEffect(() => {
+    if (action?.error) toast.error(action.error);
+  }, [action]);
 
   return (
-    <div className="w-full max-w-md">
-      <form
-        onSubmit={handleLogin}
-        className="p-8 rounded-2xl backdrop-blur-md border border-purple-500/40 shadow-xl bg-white/10 text-white space-y-6"
+    <section
+      className="relative min-h-[calc(100vh-var(--header-h))] flex items-center justify-center"
+      style={{ paddingTop: "var(--header-h)" }}
+    >
+      <div
+        className="fixed inset-0 -z-10 bg-cover bg-center"
+        style={{ backgroundImage: "url('/bg-2.jpg')" }}
+        aria-hidden
+      />
+      <div className="fixed inset-0 -z-10 bg-black/40 backdrop-blur-[1px]" />
+
+      <Form
+        method="post"
+        className="w-full max-w-md p-8 rounded-2xl text-white
+                   bg-black/40 backdrop-blur-xl
+                   border border-white/15 shadow-[0_30px_80px_rgba(0,0,0,0.35)]
+                   space-y-6"
       >
-        <h2 className="text-3xl font-extrabold text-center text-fuchsia-900 tracking-wide">
-          Sign In to Your Account
+        <h2 className="text-3xl font-extrabold text-center">
+          <span className="bg-gradient-to-r from-indigo-400 via-fuchsia-400 to-rose-400 bg-clip-text text-transparent">
+            Sign In to EventSpark
+          </span>
         </h2>
 
-        <div>
-          <label className="block text-sm font-semibold text-fuchsia-900 mb-1">
-            Email
-          </label>
+        <Field label="Email">
           <input
-            type="email"
             name="email"
-            onChange={handleChange}
-            value={authData.email}
+            type="email"
+            required
+            defaultValue="param@test.com"
             placeholder="you@example.com"
-            className="w-full px-4 py-2 rounded-lg bg-zinc-800/80 text-white placeholder:text-zinc-400 border border-zinc-600 focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+            className="w-full px-4 py-2 rounded-lg bg-zinc-900/70 border border-white/10 focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
           />
-        </div>
+        </Field>
 
-        <div>
-          <label className="block text-sm font-semibold text-fuchsia-900 mb-1">
-            Password
-          </label>
+        <Field label="Password">
           <input
-            type="password"
             name="password"
-            onChange={handleChange}
-            value={authData.password}
+            type="password"
+            defaultValue="user123!"
+            required
             placeholder="••••••••"
-            className="w-full px-4 py-2 rounded-lg bg-zinc-800/80 text-white placeholder:text-zinc-400 border border-zinc-600 focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+            className="w-full px-4 py-2 rounded-lg bg-zinc-900/70 border border-white/10 focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
           />
-        </div>
+        </Field>
 
         <button
           type="submit"
-          className="w-full py-2 rounded-lg bg-fuchsia-600 hover:bg-fuchsia-700 transition-colors text-white font-semibold shadow-md"
+          disabled={nav.state === "submitting"}
+          className="btn-gradient w-full py-3 rounded-xl font-semibold text-white
+                     bg-gradient-to-r from-fuchsia-900 via-pink-300 to-indigo-900
+                     shadow-[0_10px_30px_rgba(99,102,241,0.35)]
+                     hover:brightness-110 active:scale-[0.98] transition
+                     btn-pulse cursor-pointer"
         >
-          Sign In
+          {nav.state === "submitting" ? "Signing In..." : "Sign In 🚀"}
         </button>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
-          className="mt-8 text-center"
-        >
-          <p className="text-sm text-zinc-300">
-            🚀 Still not a member of{" "}
-            <span className="text-fuchsia-400 font-semibold tracking-wide">
-              EventSpark
-            </span>
-            ?
-          </p>
+
+        <p className="text-center text-sm text-white/80">
+          New to{" "}
+          <span className="text-fuchsia-300 font-semibold">EventSpark</span>?
+        </p>
+        <div className="flex justify-center">
           <Link
             to="/signup"
-            className="mt-2 inline-block px-5 py-2 bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-semibold rounded-full shadow-md hover:shadow-lg transition-all duration-300"
+            className="btn-gradient inline-flex items-center justify-center px-6 py-2 rounded-xl
+                       font-semibold text-white bg-gradient-to-r from-fuchsia-900 via-pink-300 to-indigo-900
+                       shadow-[0_10px_30px_rgba(99,102,241,0.35)]
+                       hover:brightness-110 active:scale-[0.98] transition
+                       btn-pulse cursor-pointer"
           >
-            ✨ Join the Party Now
+            ✨ Create Account
           </Link>
-        </motion.div>
-      </form>
-    </div>
+        </div>
+      </Form>
+    </section>
+  );
+}
+
+function Field({ label, children }) {
+  return (
+    <label className="block space-y-2">
+      <span className="text-sm font-semibold text-white/90">{label}</span>
+      {children}
+    </label>
   );
 }
