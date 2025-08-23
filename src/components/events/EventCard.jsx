@@ -1,8 +1,15 @@
-import { useContext } from "react";
-import { FaMapMarkerAlt, FaCalendarAlt } from "react-icons/fa";
-import { Link } from "react-router";
+// src/components/events/EventCard.jsx
+import { FaMapMarkerAlt, FaCalendarAlt, FaUser } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
-export default function EventCard({ id, title, location, date }) {
+export default function EventCard({
+  id,
+  title,
+  location,
+  date,
+  organizerName,
+  mine = false,
+}) {
   const formattedDate = new Date(date).toLocaleString("en-US", {
     dateStyle: "long",
     timeStyle: "short",
@@ -16,6 +23,16 @@ export default function EventCard({ id, title, location, date }) {
         <h3 className="text-xl font-extrabold text-purple-300 mb-1 tracking-wide">
           {title}
         </h3>
+
+        {(mine || organizerName) && (
+          <p className="flex items-center text-xs text-white/80 mb-2">
+            <FaUser className="mr-2 text-fuchsia-300" />
+            Organized by{" "}
+            <span className="ml-1 font-semibold">
+              {mine ? "You" : organizerName}
+            </span>
+          </p>
+        )}
 
         <p className="flex items-center text-sm text-zinc-300 mb-1">
           <FaMapMarkerAlt className="mr-2 text-rose-400" />
