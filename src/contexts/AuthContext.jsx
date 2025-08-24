@@ -15,7 +15,7 @@ export default function AuthProvider({ children }) {
           credentials: "include",
         }
       );
-      if (!res.ok) throw new Error("not authed");
+      if (!res.ok) throw new Error("not authenticated");
       const data = await res.json();
       const u = data.user ?? data;
       setUser(u);
