@@ -14,7 +14,7 @@ Frontend client for **EventSpark** — a modern event discovery and management p
 Built with **React (Vite)** + **TailwindCSS**, it provides an interactive, beautiful, and mobile-friendly experience for browsing, creating, and managing events.
 
 🌐 **Live App**: [https://eventspark-vjnm.onrender.com](https://eventspark-vjnm.onrender.com)  
-🔗 **Backend API**: [https://events-server-wnax.onrender.com](https://events-server-wnax.onrender.com)
+🔗 **Server Repo**: [https://github.com/paramveer02/events-node-backend[
 
 
 ---
@@ -94,3 +94,4 @@ npm run dev
 
 # Build for prod
 npm run build
+
