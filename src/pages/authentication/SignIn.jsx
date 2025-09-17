@@ -72,7 +72,6 @@ export default function SignIn() {
             name="email"
             type="email"
             required
-            defaultValue="param@test.com"
             placeholder="you@example.com"
             className="w-full px-4 py-2 rounded-lg bg-zinc-900/70 border border-white/10 focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
           />
@@ -82,7 +81,6 @@ export default function SignIn() {
           <input
             name="password"
             type="password"
-            defaultValue="user123!"
             required
             placeholder="••••••••"
             className="w-full px-4 py-2 rounded-lg bg-zinc-900/70 border border-white/10 focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
