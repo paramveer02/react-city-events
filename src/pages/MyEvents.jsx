@@ -58,10 +58,7 @@ export default function MyEvents() {
   }, []);
 
   return (
-    <section
-      className="relative min-h-[calc(100vh-var(--header-h))] pb-24"
-      style={{ paddingTop: "var(--header-h)" }}
-    >
+    <section className="relative min-h-screen pb-24 pt-32 sm:pt-36 px-4 sm:px-6 lg:px-8">
       <div
         className="fixed inset-0 -z-10 bg-cover bg-center"
         style={{ backgroundImage: "url('/bg-5.jpg')" }}
@@ -69,9 +66,9 @@ export default function MyEvents() {
       />
       <div className="fixed inset-0 -z-10 bg-black/45" aria-hidden />
 
-      <div className="mx-auto w-[min(96%,1100px)]">
-        <div className="rounded-2xl border border-white/15 bg-white/10 backdrop-blur-xl shadow-[0_20px_80px_rgba(0,0,0,0.35)] p-5 sm:p-7">
-          <h2 className="text-2xl sm:text-3xl font-extrabold mb-6 text-center">
+      <div className="mx-auto w-full max-w-6xl">
+        <div className="rounded-2xl sm:rounded-3xl border-2 border-white/20 bg-white/10 backdrop-blur-xl shadow-[0_20px_80px_rgba(0,0,0,0.35)] p-6 sm:p-8 lg:p-12">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold mb-4 sm:mb-6 text-center">
             <span className="text-fuchsia-400">✨</span>{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-fuchsia-400 to-rose-400">
               My <span className="text-fuchsia-400 drop-shadow">Events</span>
@@ -79,15 +76,19 @@ export default function MyEvents() {
             <span className="text-fuchsia-400">✨</span>
           </h2>
 
-          {loading && <p className="text-white/90">Loading your events…</p>}
+          {loading && (
+            <p className="text-white/90 text-sm sm:text-base">
+              Loading your events…
+            </p>
+          )}
 
           {!loading && error && (
-            <div className="rounded-xl bg-white/10 p-4 text-white/95">
-              <p className="mb-3">{error}</p>
+            <div className="rounded-xl bg-white/10 p-6 text-white/95">
+              <p className="mb-4">{error}</p>
               {error.toLowerCase().includes("sign in") && (
                 <Link
                   to="/signin"
-                  className="inline-flex items-center rounded-xl px-4 py-2 font-semibold text-white
+                  className="inline-flex items-center rounded-xl px-6 py-3 font-semibold text-white
                              bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-rose-500
                              shadow-[0_10px_30px_rgba(99,102,241,0.35)]
                              hover:brightness-110 active:scale-[0.98] transition"

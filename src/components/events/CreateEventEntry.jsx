@@ -1,6 +1,15 @@
-import { Form, useActionData, useNavigation, redirect } from "react-router-dom";
+import {
+  Form,
+  useActionData,
+  useNavigation,
+  redirect,
+  useSearchParams,
+} from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+import { Calendar, MapPin, FileText, Sparkles, Plus } from "lucide-react";
+import confetti from "canvas-confetti";
 
 /* ---------------- ACTION ---------------- */
 export async function createEventAction({ request }) {
@@ -114,111 +123,227 @@ export default function CreateEventEntry() {
   }
 
   return (
-    <section
-      className="relative min-h-[calc(100vh-var(--header-h))] pb-24"
-      style={{ paddingTop: "var(--header-h)" }}
-    >
-      <div
-        className="fixed inset-0 -z-10 bg-cover bg-center"
-        style={{ backgroundImage: "url('/bg-2.jpg')" }}
+    <section className="relative min-h-screen pb-24 pt-32 sm:pt-36 px-4 sm:px-6 lg:px-8">
+      {/* Animated Background */}
+      <div className="fixed inset-0 -z-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-950 via-black to-pink-950" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40" />
+      </div>
+
+      {/* Floating Orbs */}
+      <motion.div
+        className="absolute top-1/4 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+        animate={{
+          scale: [1, 1.2, 1],
+          x: [0, 100, 0],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+        }}
       />
-      <div className="fixed inset-0 -z-10 bg-black/45" />
 
-      <div className="mx-auto w-[min(96%,900px)]">
-        <div className="rounded-2xl border border-white/15 bg-white/10 backdrop-blur-xl shadow-[0_20px_80px_rgba(0,0,0,0.35)] p-6 sm:p-8">
-          <h2 className="mb-6 text-center text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-fuchsia-400 to-rose-400">
-            ✨ Create a New Event ✨
-          </h2>
+      <div className="mx-auto w-full max-w-4xl">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="glass-dark rounded-2xl sm:rounded-3xl border-2 border-white/20 p-6 sm:p-8 lg:p-12
+                     shadow-[0_20px_70px_rgba(168,85,247,0.3)]"
+        >
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-center mb-8 sm:mb-10"
+          >
+            <div className="inline-flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400 animate-pulse" />
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold gradient-text">
+                Create New Event
+              </h2>
+              <Plus className="w-6 h-6 sm:w-8 sm:h-8 text-pink-400" />
+            </div>
+            <p className="text-white/70 text-sm sm:text-base md:text-lg">
+              Share your amazing event with the community
+            </p>
+          </motion.div>
 
-          <Form method="post" className="space-y-5 text-white">
-            <Field label="Title">
-              <input
-                type="text"
-                name="title"
-                required
-                placeholder="Enter event title"
-                className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2 placeholder-white/60 outline-none focus:ring-2 focus:ring-fuchsia-400/60"
-              />
-            </Field>
-
-            <Field label="Description">
-              <textarea
-                name="description"
-                required
-                rows={4}
-                placeholder="Describe your event..."
-                className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2 placeholder-white/60 outline-none focus:ring-2 focus:ring-fuchsia-400/60"
-              />
-            </Field>
-
-            <Field label="Location">
-              <div className="relative">
+          <Form method="post" className="space-y-5 sm:space-y-6 text-white">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Field
+                label="Event Title"
+                icon={<FileText className="w-5 h-5 text-purple-400" />}
+              >
                 <input
                   type="text"
-                  name="location"
-                  value={query}
-                  onChange={onChangeLocation}
-                  onKeyDown={onKeyDown}
-                  autoComplete="off"
+                  name="title"
                   required
-                  placeholder="Start typing an address…"
-                  className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2 placeholder-white/60 outline-none focus:ring-2 focus:ring-fuchsia-400/60"
+                  placeholder="e.g., Summer Music Festival 2025"
+                  className="w-full rounded-xl premium-input px-4 py-3 text-white
+                           focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all"
                 />
-                {open && suggestions.length > 0 && (
-                  <ul className="absolute z-50 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-white/20 bg-black/80 shadow-xl">
-                    {suggestions.map((s, i) => (
-                      <li
-                        key={s.id ?? i}
-                        onMouseDown={() => {
-                          setQuery(s.label);
-                          setOpen(false);
-                        }}
-                        className={`px-4 py-2 cursor-pointer ${
-                          i === highlight
-                            ? "bg-fuchsia-500/30"
-                            : "hover:bg-white/10"
-                        }`}
-                      >
-                        {s.label}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </Field>
+              </Field>
+            </motion.div>
 
-            <Field label="Date & Time">
-              <input
-                type="datetime-local"
-                name="date"
-                required
-                className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2 outline-none focus:ring-2 focus:ring-fuchsia-400/60"
-              />
-            </Field>
-
-            <button
-              type="submit"
-              disabled={submitting}
-              className="group relative inline-flex w-full items-center justify-center rounded-xl px-4 py-3 font-semibold text-white
-                         bg-gradient-to-r from-fuchsia-900 via-pink-300 to-indigo-900
-                         shadow-[0_10px_30px_rgba(99,102,241,0.35)]
-                         hover:brightness-110 active:scale-[0.98] transition"
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
             >
-              {submitting ? "Creating…" : "🚀 Create Event"}
-            </button>
+              <Field
+                label="Description"
+                icon={<FileText className="w-5 h-5 text-pink-400" />}
+              >
+                <textarea
+                  name="description"
+                  required
+                  rows={5}
+                  placeholder="Tell everyone what makes your event special..."
+                  className="w-full rounded-xl premium-input px-4 py-3 text-white
+                           focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all resize-none"
+                />
+              </Field>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <Field
+                label="Location"
+                icon={<MapPin className="w-5 h-5 text-blue-400" />}
+              >
+                <div className="relative">
+                  <input
+                    type="text"
+                    name="location"
+                    value={query}
+                    onChange={onChangeLocation}
+                    onKeyDown={onKeyDown}
+                    autoComplete="off"
+                    required
+                    placeholder="Start typing an address..."
+                    className="w-full rounded-xl premium-input px-4 py-3 text-white
+                             focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all"
+                  />
+                  {open && suggestions.length > 0 && (
+                    <ul
+                      className="absolute z-50 mt-2 max-h-56 w-full overflow-y-auto rounded-xl
+                                   glass-dark border border-white/20 shadow-2xl"
+                    >
+                      {suggestions.map((s, i) => (
+                        <li
+                          key={s.id ?? i}
+                          onMouseDown={() => {
+                            setQuery(s.label);
+                            setOpen(false);
+                          }}
+                          className={`px-4 py-3 cursor-pointer transition-colors ${
+                            i === highlight
+                              ? "bg-purple-500/30"
+                              : "hover:bg-white/10"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <MapPin className="w-4 h-4 text-purple-400" />
+                            <span className="text-sm">{s.label}</span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </Field>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.6 }}
+            >
+              <Field
+                label="Date & Time"
+                icon={<Calendar className="w-5 h-5 text-green-400" />}
+              >
+                <div className="relative">
+                  <input
+                    type="datetime-local"
+                    name="date"
+                    required
+                    className="w-full rounded-xl premium-input px-4 py-3 pr-12 text-white
+                             focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all
+                             [color-scheme:dark]"
+                  />
+                  <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-green-400 pointer-events-none" />
+                </div>
+              </Field>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+            >
+              <button
+                type="submit"
+                disabled={submitting}
+                className="relative w-full px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-white text-base sm:text-lg
+                           bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600
+                           bg-[length:200%_100%] hover:bg-right
+                           shadow-[0_0_40px_rgba(168,85,247,0.5)]
+                           transition-all duration-500 overflow-hidden group
+                           disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  {submitting ? (
+                    <>
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{
+                          duration: 1,
+                          repeat: Infinity,
+                          ease: "linear",
+                        }}
+                        className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full"
+                      />
+                      <span className="text-sm sm:text-base">Creating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
+                      Create Event
+                    </>
+                  )}
+                </span>
+                <div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent
+                                -translate-x-full group-hover:translate-x-full transition-transform duration-1000"
+                />
+              </button>
+            </motion.div>
           </Form>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 }
 
-function Field({ label, children }) {
+function Field({ label, icon, children }) {
   return (
     <label className="block">
-      <span className="mb-2 block text-sm font-semibold text-white/90">
-        {label}
-      </span>
+      <div className="flex items-center gap-2 mb-2">
+        {icon}
+        <span className="text-xs sm:text-sm font-semibold text-white/90">
+          {label}
+        </span>
+      </div>
       {children}
     </label>
   );

@@ -4,7 +4,6 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { Sparkles, Calendar, MapPin, Zap, ArrowRight } from "lucide-react";
 import { TypeAnimation } from "react-type-animation";
-import GradientText from "../components/animations/GradientText";
 
 export default function Hero() {
   const { isAuth } = useContext(AuthContext);
@@ -61,7 +60,7 @@ export default function Hero() {
   }
 
   return (
-    <section className="relative flex items-center justify-center min-h-screen overflow-hidden pt-32 sm:pt-36 px-4 sm:px-6 lg:px-8">
+    <section className="relative flex items-center justify-center min-h-screen overflow-hidden">
       {/* Animated Background */}
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-black to-pink-900" />
@@ -71,7 +70,7 @@ export default function Hero() {
 
       {/* Floating Orbs */}
       <motion.div
-        className="absolute top-1/4 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+        className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
         animate={{
           scale: [1, 1.2, 1],
           x: [0, 100, 0],
@@ -84,7 +83,7 @@ export default function Hero() {
         }}
       />
       <motion.div
-        className="absolute bottom-1/4 right-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+        className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
         animate={{
           scale: [1, 1.3, 1],
           x: [0, -100, 0],
@@ -103,18 +102,18 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="space-y-6 sm:space-y-8"
+          className="space-y-8"
         >
           {/* Badge */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full glass-dark border border-white/20
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full glass-dark border border-white/20
                        shadow-[0_0_30px_rgba(168,85,247,0.3)]"
           >
-            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400 animate-pulse" />
-            <span className="text-white/90 font-semibold text-xs sm:text-base">
+            <Sparkles className="w-5 h-5 text-purple-400 animate-pulse" />
+            <span className="text-white/90 font-semibold">
               Discover Events Like Never Before
             </span>
           </motion.div>
@@ -124,15 +123,10 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold text-white leading-tight"
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold text-white leading-tight"
           >
             <span className="block">Experience the</span>
-            <GradientText
-              colors={["#40ffaa", "#4079ff", "#ff40aa", "#4079ff", "#40ffaa"]}
-              animationSpeed={3}
-              showBorder={false}
-              className="my-4"
-            >
+            <span className="block gradient-text">
               <TypeAnimation
                 sequence={[
                   "Magic",
@@ -148,7 +142,7 @@ export default function Hero() {
                 speed={50}
                 repeat={Infinity}
               />
-            </GradientText>
+            </span>
             <span className="block">of Live Events</span>
           </motion.h1>
 
@@ -157,9 +151,10 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="text-base sm:text-xl md:text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed px-4"
+            className="text-xl sm:text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed"
           >
-            Discover and create unforgettable events in your city
+            Your ultimate destination for discovering, creating, and
+            experiencing unforgettable events in your city
           </motion.p>
 
           {/* CTA Buttons */}
@@ -167,7 +162,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-8 sm:mt-12"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12"
           >
             {isAuth ? (
               <>
@@ -175,16 +170,16 @@ export default function Hero() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="relative px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-white text-base sm:text-lg
+                    className="relative px-8 py-4 rounded-xl font-bold text-white text-lg
                                bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600
                                bg-[length:200%_100%] hover:bg-right
                                shadow-[0_0_40px_rgba(168,85,247,0.5)]
-                               transition-all duration-500 overflow-hidden group w-full sm:w-auto"
+                               transition-all duration-500 overflow-hidden group"
                   >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="relative z-10 flex items-center gap-2">
+                      <Calendar className="w-5 h-5" />
                       Explore Events
-                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </span>
                     <div
                       className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent
@@ -197,12 +192,12 @@ export default function Hero() {
                   disabled={loading}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="relative px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-white text-base sm:text-lg
+                  className="relative px-8 py-4 rounded-xl font-bold text-white text-lg
                              border-2 border-white/30 glass-dark
                              hover:border-purple-400/50 hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]
-                             transition-all duration-300 group w-full sm:w-auto"
+                             transition-all duration-300 group"
                 >
-                  <span className="flex items-center justify-center gap-2">
+                  <span className="flex items-center gap-2">
                     {loading ? (
                       <>
                         <motion.div
@@ -212,15 +207,13 @@ export default function Hero() {
                             repeat: Infinity,
                             ease: "linear",
                           }}
-                          className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full"
+                          className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
                         />
-                        <span className="text-sm sm:text-base">
-                          Locating...
-                        </span>
+                        Locating...
                       </>
                     ) : (
                       <>
-                        <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <Zap className="w-5 h-5" />
                         AI City Guide
                       </>
                     )}
@@ -229,20 +222,20 @@ export default function Hero() {
               </>
             ) : (
               <>
-                <Link to="/signup" className="w-full sm:w-auto">
+                <Link to="/signup">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="relative px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-white text-base sm:text-lg
+                    className="relative px-8 py-4 rounded-xl font-bold text-white text-lg
                                bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600
                                bg-[length:200%_100%] hover:bg-right
                                shadow-[0_0_40px_rgba(168,85,247,0.5)]
-                               transition-all duration-500 overflow-hidden group w-full"
+                               transition-all duration-500 overflow-hidden group"
                   >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="relative z-10 flex items-center gap-2">
+                      <Sparkles className="w-5 h-5" />
                       Get Started Free
-                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </span>
                     <div
                       className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent
@@ -279,18 +272,18 @@ export default function Hero() {
             {[
               {
                 icon: Calendar,
-                title: "Discover",
-                desc: "Amazing events near you",
+                title: "Discover Events",
+                desc: "Find amazing events happening near you",
               },
               {
                 icon: Sparkles,
-                title: "Create",
-                desc: "Share your events",
+                title: "Create Events",
+                desc: "Share your events with the community",
               },
               {
                 icon: MapPin,
-                title: "Explore",
-                desc: "AI-powered city guides",
+                title: "Local Insights",
+                desc: "AI-powered city guides and recommendations",
               },
             ].map((feature, index) => (
               <motion.div
