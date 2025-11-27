@@ -56,10 +56,7 @@ export default function AIGuidePage() {
   }, [cityParam, guide]);
 
   return (
-    <section
-      className="relative min-h-[calc(100svh-var(--header-h))] pb-24 text-white"
-      style={{ paddingTop: "var(--header-h)" }}
-    >
+    <section className="relative min-h-screen pb-24 pt-32 sm:pt-36 px-4 sm:px-6 lg:px-8 text-white">
       {/* Full-page starry background */}
       <div
         className="fixed inset-0 -z-10 bg-cover bg-center"
