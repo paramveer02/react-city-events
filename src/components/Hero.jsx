@@ -5,6 +5,7 @@ import { AuthContext } from "../contexts/AuthContext";
 import { Sparkles, Calendar, MapPin, Zap, ArrowRight } from "lucide-react";
 import { TypeAnimation } from "react-type-animation";
 import GradientText from "../components/animations/GradientText";
+import { API_BASE } from "../utils/api";
 
 export default function Hero() {
   const { isAuth } = useContext(AuthContext);
@@ -24,17 +25,15 @@ export default function Hero() {
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         try {
-          const res = await fetch(
-            "https://events-server-wnax.onrender.com/api/ai/city-guide",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              credentials: "include",
-              body: JSON.stringify({
-                coords: { lat: pos.coords.latitude, lng: pos.coords.longitude },
-              }),
-            }
-          );
+          const qs = new URLSearchParams({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          });
+          const res = await fetch(`${API_BASE}/api/ai/city-guide?${qs}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+          });
           const json = await res.json();
           if (!res.ok)
             throw new Error(json?.message || "Failed to fetch guide");
@@ -62,16 +61,14 @@ export default function Hero() {
 
   return (
     <section className="relative flex items-center justify-center min-h-screen overflow-hidden pt-32 sm:pt-36 px-4 sm:px-6 lg:px-8">
-      {/* Animated Background */}
+      {/* Let the video show through with a soft veil */}
       <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-black to-pink-900" />
-        <div className="absolute inset-0 bg-[url('/bg-2.jpg')] bg-cover bg-center opacity-20" />
-        <div className="absolute inset-0 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/40 to-purple-900/30 backdrop-blur-[2px]" />
       </div>
 
       {/* Floating Orbs */}
       <motion.div
-        className="absolute top-1/4 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+        className="absolute top-1/4 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-25"
         animate={{
           scale: [1, 1.2, 1],
           x: [0, 100, 0],
@@ -84,7 +81,7 @@ export default function Hero() {
         }}
       />
       <motion.div
-        className="absolute bottom-1/4 right-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+        className="absolute bottom-1/4 right-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-25"
         animate={{
           scale: [1, 1.3, 1],
           x: [0, -100, 0],
@@ -157,9 +154,9 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="text-base sm:text-xl md:text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed px-4"
+            className="text-base sm:text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed px-4 font-semibold"
           >
-            Discover and create unforgettable events in your city
+            Spark bold nights, wild days, and unforgettable meetups in your city.
           </motion.p>
 
           {/* CTA Buttons */}
@@ -183,13 +180,28 @@ export default function Hero() {
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
                       <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
-                      Explore Events
+                      Find Epic Events Nearby
                       <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
                     </span>
                     <div
                       className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent
                                     -translate-x-full group-hover:translate-x-full transition-transform duration-1000"
                     />
+                  </motion.button>
+                </Link>
+                <Link to="/create">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-white text-base sm:text-lg
+                               border-2 border-white/30 glass-dark
+                               hover:border-purple-400/50 hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]
+                               transition-all duration-300"
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
+                      Host Your Show
+                    </span>
                   </motion.button>
                 </Link>
                 <motion.button
@@ -229,7 +241,7 @@ export default function Hero() {
               </>
             ) : (
               <>
-                <Link to="/signup" className="w-full sm:w-auto">
+                <Link to="/events" className="w-full sm:w-auto">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -240,8 +252,8 @@ export default function Hero() {
                                transition-all duration-500 overflow-hidden group w-full"
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
-                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
-                      Get Started Free
+                      <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
+                      Jump Into Events
                       <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
                     </span>
                     <div
@@ -250,24 +262,61 @@ export default function Hero() {
                     />
                   </motion.button>
                 </Link>
-                <Link to="/events">
+                <Link to="/signup" className="w-full sm:w-auto">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-8 py-4 rounded-xl font-bold text-white text-lg
                                border-2 border-white/30 glass-dark
                                hover:border-purple-400/50 hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]
-                               transition-all duration-300"
+                               transition-all duration-300 w-full sm:w-auto"
                   >
                     <span className="flex items-center gap-2">
-                      <Calendar className="w-5 h-5" />
-                      Browse Events
+                      <Sparkles className="w-5 h-5" />
+                      Get Started Free
                     </span>
                   </motion.button>
                 </Link>
+                <motion.button
+                  onClick={requestCityGuide}
+                  disabled={loading}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="relative px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-white text-base sm:text-lg
+                             border-2 border-white/30 glass-dark
+                             hover:border-purple-400/50 hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]
+                             transition-all duration-300 group w-full sm:w-auto"
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    {loading ? (
+                      <>
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{
+                            duration: 1,
+                            repeat: Infinity,
+                            ease: "linear",
+                          }}
+                          className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full"
+                        />
+                        <span className="text-sm sm:text-base">
+                          Locating...
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
+                        AI City Guide
+                      </>
+                    )}
+                  </span>
+                </motion.button>
               </>
             )}
           </motion.div>
+          <p className="text-white/70 text-xs sm:text-sm max-w-2xl mx-auto">
+            We’ll ask for your spot to personalize the vibe — or just type a city and we’ll roll with it.
+          </p>
 
           {/* Features Grid */}
           <motion.div

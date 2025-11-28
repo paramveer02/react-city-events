@@ -53,6 +53,32 @@ export default function EventsPage() {
   useEffect(() => {
     let ignore = false;
 
+    const normalize = (list, nearbyCity, preserveStatus = false) => {
+      const normalized = list.map((e) => ({
+        id: e._id ?? e.id,
+        title: e.title,
+        location: e.location,
+        date: e.date,
+        organizerName: e.organizer?.name ?? e.organizerName, // works with populated or pre-shaped data
+        mine:
+          user?._id &&
+          (e.organizer?._id === user._id || e.organizer === user._id),
+      }));
+
+      if (normalized.length === 0) {
+        setStatus(
+          preserveStatus
+            ? "No events found."
+            : nearbyCity
+            ? `No events found in ${nearbyCity} yet.`
+            : "No events found."
+        );
+      } else if (!preserveStatus) {
+        setStatus(nearbyCity ? `Showing events in ${nearbyCity}.` : "");
+      }
+      setEvents(normalized);
+    };
+
     const getPosition = () =>
       new Promise((resolve, reject) => {
         if (!("geolocation" in navigator)) {
@@ -66,6 +92,12 @@ export default function EventsPage() {
         );
       });
 
+    const fetchAllEvents = async (preserveStatus = false) => {
+      const data = await getJSON("/api/v1/events");
+      const list = Array.isArray(data?.events) ? data.events : Array.isArray(data) ? data : [];
+      normalize(list, undefined, preserveStatus);
+    };
+
     (async () => {
       try {
         setLoading(true);
@@ -73,7 +105,7 @@ export default function EventsPage() {
         if (ignore) return;
 
         setStatus("Fetching nearby events…");
-        const url = `https://events-server-wnax.onrender.com/api/v1/events/near?lat=${coords.latitude}&lng=${coords.longitude}`;
+        const url = `/api/v1/events/near?lat=${coords.latitude}&lng=${coords.longitude}`;
         const data = await getJSON(url);
 
         const list = Array.isArray(data?.events)
@@ -84,42 +116,22 @@ export default function EventsPage() {
           ? data
           : [];
 
-        // pull organizer name if populated; mark as mine if matches
-        const normalized = list.map((e) => ({
-          id: e._id ?? e.id,
-          title: e.title,
-          location: e.location,
-          date: e.date,
-          organizerName: e.organizer?.name ?? e.organizerName, // works with populated or pre-shaped data
-          mine:
-            user?._id &&
-            (e.organizer?._id === user._id || e.organizer === user._id),
-        }));
-
-        setEvents(normalized);
+        normalize(list, data?.city);
         setLoading(false);
-
-        if (normalized.length === 0) {
-          setStatus(
-            data?.city
-              ? `No nearby events in ${data.city} yet.`
-              : "No nearby events found."
-          );
-        } else {
-          setStatus(data?.city ? `Showing events in ${data.city}.` : "");
-        }
       } catch (err) {
         if (ignore) return;
-        setLoading(false);
-        if (
-          err?.code === 1 ||
-          (err?.message || "").toLowerCase().includes("denied")
-        ) {
+        try {
           setStatus(
-            "Location permission denied. Enable it to see nearby events."
+            err?.code === 1 ||
+              (err?.message || "").toLowerCase().includes("denied")
+              ? "Location denied. Showing all events instead."
+              : "Location unavailable. Showing all events."
           );
-        } else {
-          setStatus("Could not detect your location.");
+          await fetchAllEvents(true);
+        } catch (e) {
+          setStatus("Could not load events. Please try again.");
+        } finally {
+          setLoading(false);
         }
       }
     })();
@@ -139,16 +151,14 @@ export default function EventsPage() {
 
   return (
     <section className="relative min-h-screen pb-24 pt-32 sm:pt-36 px-4 sm:px-6 lg:px-8">
-      {/* Animated Background - Fixed */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-950 via-black to-pink-950" />
-        {/* Removed the odd background image */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40" />
+      {/* Let the global video breathe through with a soft veil */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-purple-900/35 backdrop-blur-[1px]" />
       </div>
 
       {/* Floating Orbs */}
       <motion.div
-        className="absolute top-1/4 right-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10"
+        className="absolute top-1/4 right-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-15"
         animate={{
           scale: [1, 1.2, 1],
           x: [0, -50, 0],
@@ -178,7 +188,7 @@ export default function EventsPage() {
               <div className="flex items-center gap-2 sm:gap-3 mb-2">
                 <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" />
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold gradient-text">
-                  Events Near You
+                  Hot Events Near You
                 </h2>
                 <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-pink-400 animate-pulse" />
               </div>

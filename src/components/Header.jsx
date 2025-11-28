@@ -99,6 +99,16 @@ export default function Header() {
           </motion.li>
           <motion.li whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <NavLink
+              to="/events"
+              className={({ isActive }) =>
+                `${baseLink} ${isActive ? active : ""}`
+              }
+            >
+              Events
+            </NavLink>
+          </motion.li>
+          <motion.li whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <NavLink
               to="/myevents"
               className={({ isActive }) =>
                 `${baseLink} ${isActive ? active : ""}`
@@ -247,6 +257,21 @@ export default function Header() {
                   >
                     <Home className="w-5 h-5" />
                     Home
+                  </NavLink>
+
+                  <NavLink
+                    to="/events"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-3 rounded-xl text-white font-semibold transition-all ${
+                        isActive
+                          ? "bg-gradient-to-r from-purple-500/30 to-pink-500/30 shadow-[0_0_20px_rgba(168,85,247,0.3)]"
+                          : "hover:bg-white/10"
+                      }`
+                    }
+                  >
+                    <Calendar className="w-5 h-5" />
+                    Events
                   </NavLink>
 
                   <NavLink

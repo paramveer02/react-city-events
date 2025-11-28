@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -19,17 +19,29 @@ const eventImages = [
 ];
 
 export default function RootLayout() {
-  const location = useLocation();
   const [loading, setLoading] = useState(true);
 
+  // Only show the loader on first paint so route-to-route feels instant
   useEffect(() => {
-    setLoading(true);
-    const t = setTimeout(() => setLoading(false), 1000);
+    const t = setTimeout(() => setLoading(false), 700);
     return () => clearTimeout(t);
-  }, [location.pathname]);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Background video with soft gradient overlay */}
+      <div className="fixed inset-0 -z-20 overflow-hidden">
+        <video
+          className="min-w-full min-h-full object-cover"
+          src="/hero-bg.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-purple-900/40" />
+      </div>
+
       <ImageTrail items={eventImages} variant={2} />
       <Header />
       <main className="flex-1">

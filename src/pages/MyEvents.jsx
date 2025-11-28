@@ -59,12 +59,18 @@ export default function MyEvents() {
 
   return (
     <section className="relative min-h-screen pb-24 pt-32 sm:pt-36 px-4 sm:px-6 lg:px-8">
-      <div
-        className="fixed inset-0 -z-10 bg-cover bg-center"
-        style={{ backgroundImage: "url('/bg-5.jpg')" }}
-        aria-hidden
-      />
-      <div className="fixed inset-0 -z-10 bg-black/45" aria-hidden />
+      {/* Page-specific video background */}
+      <div className="fixed inset-0 -z-10 overflow-hidden" aria-hidden>
+        <video
+          className="min-w-full min-h-full object-cover"
+          src="/events.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/55 to-purple-900/35 backdrop-blur-[1px]" />
+      </div>
 
       <div className="mx-auto w-full max-w-6xl">
         <div className="rounded-2xl sm:rounded-3xl border-2 border-white/20 bg-white/10 backdrop-blur-xl shadow-[0_20px_80px_rgba(0,0,0,0.35)] p-6 sm:p-8 lg:p-12">

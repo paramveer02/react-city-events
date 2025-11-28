@@ -112,7 +112,6 @@ export default function Footer() {
           <p className="text-white/60 text-sm flex items-center justify-center gap-2">
             © {new Date().getFullYear()} EventSpark. Made with
             <Heart className="w-4 h-4 text-pink-500 fill-pink-500" />
-            by developers who love events
           </p>
         </motion.div>
       </div>

@@ -20,7 +20,10 @@ export async function createEventAction({ request }) {
   const dateRaw = form.get("date");
 
   // convert <input type="datetime-local"> to ISO
-  const dateISO = new Date(dateRaw).toISOString();
+  const dateISO = new Date(dateRaw);
+  if (!dateRaw || Number.isNaN(dateISO.getTime())) {
+    return { error: "Please pick a valid date and time." };
+  }
 
   const res = await fetch(
     "https://events-server-wnax.onrender.com/api/v1/events",
@@ -28,9 +31,18 @@ export async function createEventAction({ request }) {
       method: "POST",
       credentials: "include", // send auth cookie
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, description, date: dateISO, location }),
+      body: JSON.stringify({
+        title,
+        description,
+        date: dateISO.toISOString(),
+        location,
+      }),
     }
   );
+
+  if (res.status === 401) {
+    return redirect("/signin?next=/create");
+  }
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
@@ -235,7 +247,7 @@ export default function CreateEventEntry() {
                   />
                   {open && suggestions.length > 0 && (
                     <ul
-                      className="absolute z-50 mt-2 max-h-56 w-full overflow-y-auto rounded-xl
+                      className="absolute left-0 top-full z-50 mt-2 max-h-56 w-full overflow-y-auto rounded-xl
                                    glass-dark border border-white/20 shadow-2xl"
                     >
                       {suggestions.map((s, i) => (
